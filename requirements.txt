@@ -1,0 +1,5 @@
+python_telegram_bot==13.6
+pytesseract==0.3.7
+Image==1.5.33
+Pillow==8.2.0
+telegram==0.0.1
