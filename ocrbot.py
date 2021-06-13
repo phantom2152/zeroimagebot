@@ -64,7 +64,7 @@ def text(update, context):
     id = update.message.chat_id
     context.bot.get_file(update.message.reply_to_message.photo[-1]).download(
         custom_path=f"img/{id}.jpg")
-    #pytesseract.pytesseract.tesseract_cmd = "/app/.apt/usr/bin/tesseract"
+    pytesseract.pytesseract.tesseract_cmd = "/app/.apt/usr/bin/tesseract"
     string = (pytesseract.image_to_string(
         Image.open(f"img/{id}.jpg")))
     try:
