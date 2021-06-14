@@ -1,12 +1,13 @@
 from telegram import Update, ForceReply
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext, CallbackQueryHandler
 import telegram
+import requests
 import os
 try:
     from PIL import Image
 except ImportError:
     import image
-import pytesseract
+# import pytesseract
 
 # created by @im_raveen
 # ocr_bot
@@ -14,6 +15,23 @@ import pytesseract
 
 TOKEN = os.getenv("BOT_TOKEN")
 APP_NAME = os.getenv("APP_NAME")
+ocr_token = os.getenv("OCR_TOKEN")
+
+def read_img(filename):
+    sou = open(filename,"rb")
+    url = "https://api.ocr.space/parse/image"
+    fi = {filename: sou}
+    data = {
+    "apikey": ocr_token,
+    "language": "eng"
+}
+    try:
+        re = requests.post(url, files=fi, data=data).json()
+        return re['ParsedResults'][0]['ParsedText']
+    except Exception:
+        return ""
+    
+    
 
 def start(update: Update, _: CallbackContext) -> None:
     """Send a message when the command /start is issued."""
@@ -64,9 +82,10 @@ def text(update, context):
     id = update.message.chat_id
     context.bot.get_file(update.message.reply_to_message.photo[-1]).download(
         custom_path=f"img/{id}.jpg")
-    pytesseract.pytesseract.tesseract_cmd = "/app/.apt/usr/bin/tesseract"
-    string = (pytesseract.image_to_string(
-        Image.open(f"img/{id}.jpg")))
+#     pytesseract.pytesseract.tesseract_cmd = "/app/.apt/usr/bin/tesseract"
+#     string = (pytesseract.image_to_string(
+#         Image.open(f"img/{id}.jpg")))
+    string = read_img(f"img/{id}.jpg")
     try:
         update.message.reply_text(string)
     except Exception:
