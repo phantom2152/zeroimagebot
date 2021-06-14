@@ -18,6 +18,7 @@ APP_NAME = os.getenv("APP_NAME")
 ocr_token = os.getenv("OCR_TOKEN")
 
 def read_img(filename):
+    print("in read img")
     sou = open(filename,"rb")
     url = "https://api.ocr.space/parse/image"
     fi = {filename: sou}
@@ -27,6 +28,7 @@ def read_img(filename):
 }
     try:
         re = requests.post(url, files=fi, data=data).json()
+        print("after post")
         return re['ParsedResults'][0]['ParsedText']
     except Exception:
         return ""
