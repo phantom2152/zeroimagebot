@@ -3,12 +3,6 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 import telegram
 import requests
 import os
-try:
-    from PIL import Image
-except ImportError:
-    import image
-# import pytesseract
-
 # created by @im_raveen
 # ocr_bot
 # new_updates_soon
@@ -18,15 +12,16 @@ APP_NAME = os.getenv("APP_NAME")
 ocr_token = os.getenv("OCR_TOKEN")
 
 def read_img(filename):
-    print("in read img")
-    sou = open(filename,"rb")
-    url = "https://api.ocr.space/parse/image"
-    fi = {filename: sou}
-    data = {
-    "apikey": ocr_token,
-    "language": "eng"
-}
     try:
+        print("in read img")
+        sou = open(filename,"rb")
+        url = "https://api.ocr.space/parse/image"
+        fi = {filename: sou}
+        data = {
+        "apikey": ocr_token,
+        "language": "eng"
+    }
+
         re = requests.post(url, files=fi, data=data).json()
         print("after post")
         return re['ParsedResults'][0]['ParsedText']
@@ -82,12 +77,10 @@ def image_coversion(update, context):
 def text(update, context):
     """Send a message when the command /img_to_txt is issued. """
     id = update.message.chat_id
+    filepath = f"img/{id}.jpg"
     context.bot.get_file(update.message.reply_to_message.photo[-1]).download(
-        custom_path=f"img/{id}.jpg")
-#     pytesseract.pytesseract.tesseract_cmd = "/app/.apt/usr/bin/tesseract"
-#     string = (pytesseract.image_to_string(
-#         Image.open(f"img/{id}.jpg")))
-    string = read_img(f"img/{id}.jpg")
+        custom_path=filepath)
+    string = read_img(filepath)
     try:
         update.message.reply_text(string)
     except Exception:
