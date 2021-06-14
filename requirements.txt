@@ -1,5 +1,2 @@
 python_telegram_bot
-pytesseract
-Image
-Pillow
 requests
